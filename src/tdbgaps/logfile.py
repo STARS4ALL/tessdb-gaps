@@ -188,8 +188,8 @@ def parse(connection, options):
         log.info("No new log fles to parse")
 
 
-def gaps(connection, options):
-    log.info("Analyzing database gaps")
+def intervals(connection, options):
+    log.info("Analyzing database intervals")
     gap_list = list()
     for item in pairwise(stats_iterator(connection)):
         n0 = item[0][1]
@@ -207,4 +207,11 @@ def gaps(connection, options):
         log.info("No new intervals to analyze")
     update_intervals(connection, gap_list)
     calculate_gap(intervals_iterator(connection))
+
+
+def gaps(connection, options):
+    parse(connection, options)
+    intervals(connection, options)
+
+
         

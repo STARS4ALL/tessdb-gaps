@@ -99,11 +99,11 @@ def createParser():
 
     subparser = parser.add_subparsers(dest='command')
 
-    parser_logs  = subparser.add_parser('logfile', help='gaps command')
-    
-    # -----------------------------------------
-    # Create second level parsers for 'register'
-    # -----------------------------------------
+    parser_logs  = subparser.add_parser('logfile',  help='gaps command')
+
+    # ---------------------------------------
+    # Create second level parsers for 'parse'
+    # ---------------------------------------
 
     subparser = parser_logs.add_subparsers(dest='subcommand')
     logreg = subparser.add_parser('parse',  help="parse individual log files and extract relevant information")
@@ -113,10 +113,22 @@ def createParser():
 
 
     # -------------------------------------
+    # Create second level parsers for 'intervals'
+    # -----------------------------------------
+
+    loggap = subparser.add_parser('intervals',  help="detect gaps in operation")
+
+
+    # -------------------------------------
     # Create second level parsers for 'gaps'
     # -------------------------------------
 
-    logreg = subparser.add_parser('gaps',  help="detect gaps in operation")
+    logpip = subparser.add_parser('gaps',  help="detect gaps in operation")
+    load1 = logpip.add_mutually_exclusive_group(required=True)
+    load1.add_argument('-f', '--input-file',  type=testfile, default=None, help='Log file to parse')
+    load1.add_argument('-b', '--base-dir',    type=testdir, default=None, help='Log directory to parse')
+
+
     
 
 
