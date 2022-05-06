@@ -49,7 +49,7 @@ def extract_db_info(matchobj):
 
 
 def load_lines(path):
-    log.info(f"Opening {path}")
+    log.info(f"Parsing {path}")
     with open(path) as f:
         for i, line in enumerate(f, start=1):
             yield (path, i, line)
@@ -84,7 +84,7 @@ def parsed_files_iterator(connection):
     return cursor
 
 
-def update_parsed_files(connection, iterable):
+def update_parsed_file(connection, iterable):
     cursor = connection.cursor()
     cursor.executemany(
         '''
@@ -110,9 +110,10 @@ def parse(connection, options):
     parsed_list = (result[0] for result in parsed_files_iterator(connection))
     difference = set(file_list) - set(parsed_list)
     if difference:
+        updated = list()
         for f in difference:
-            updated = list(map_lines(filter_lines(load_lines(f))))
-        update_parsed_files(connection, updated)
+            updated.extend(list(map_lines(filter_lines(load_lines(f)))))
+        update_parsed_file(connection, updated)
     else:
         log.info("No new log fles to parse")
         
