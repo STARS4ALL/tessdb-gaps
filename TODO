@@ -1,0 +1,20 @@
+SHORT TERM
+==========
+
+* MIGRACION 
+===========
+ESTO PARA CUANDO LO VAYA A INSTALAR EN EL PC DESTINO
+
+Tabla config_t
+ - Borrar propiedad (ref-device, zp_abs)
+ - Modificar (ref-device, zp) => 20.44
+ - Insertar propiedad (calibration, zp_fict) = 20.50
+
+* Pending bug fixes:
+  zptool.utils.paging() no funciona en estos caso:
+  - con lsitas/tuplas y size=None
+  - con cursores y size != None
+
+
+* stars488 saca por el puerto serie solo el formato antiguo
+* stars63 saca por el puerto serie tanto JSON como el formato antiguo
