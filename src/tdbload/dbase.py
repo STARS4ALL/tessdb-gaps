@@ -169,7 +169,7 @@ def lookup_database(connection, input_file):
                 log.error(f"Missing essential datum in CSV file: {e}")
                 continue
             except NoTessError as e:
-                continue
+                log.error(f"When looking name->MAC{e}")
             except Exception as e:
                 log.error(e)
                 continue
