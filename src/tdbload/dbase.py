@@ -126,9 +126,20 @@ def fix_ids(row):
     row['units_id'] = 2
     return row
 
+def missing_fields(row):
+    _ = row['name']
+    _ = row['freq']
+    _ = row['mag']
+    _ = row['seq']
+    _ = row['tamb']
+    _ = row['tsky']
+    _ = row['wdBm']
+    return row
+
 
 def process_row(connection, row):
     row = fix_ids(row)
+    row = missing_fields(row)
     row = lookup_mac(connection, row)
     row = lookup_tess(connection, row)
     row = lookup_location(connection, row)
@@ -154,6 +165,9 @@ def lookup_database(connection, input_file):
             rows = photometers.get(name, list())
             try:
                 row = process_row(connection, row)
+            except KeyError as e:
+                log.error(f"Missing essential datum in CSV file: {e}")
+                continue
             except NoTessError as e:
                 continue
             except Exception as e:
