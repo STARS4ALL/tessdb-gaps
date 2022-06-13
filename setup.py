@@ -16,6 +16,7 @@ KEYWORDS     = ['Light Pollution','Astronomy']
 URL          = 'https://github.com/astrorafael/tessdb-gaps/'
 DEPENDENCIES = [
     'tabulate',   # fancy display tables,
+    'jinja2'
 ]
 
 CLASSIFIERS  = [
@@ -37,6 +38,9 @@ PACKAGE_DATA = {
         'sql/*.sql',
         'sql/initial/*.sql',
         'sql/updates/*.sql',
+    ],
+    'tdbload.templates': [
+        '*.j2',
     ],
 }
 

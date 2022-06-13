@@ -1,0 +1,29 @@
+BEGIN TRANSACTION;
+{% for row in measurements %}
+INSERT INTO tesss_readings_t(
+	time_id, 
+	date_id, 
+	tess_id, -- {{ row.name}} {{ row.mac }}
+	location_id, -- {{ row.site_name }}
+	units_id, 
+	sequence_number, 
+	frequency, 
+	magnitude, 
+	ambient_temperature, 
+	sky_temperature, 
+	signal_strength
+) VALUES (
+	{{ row.time_id }},
+	{{ row.date_id }},
+	{{ row.tess_id }},
+	{{ row.location_id }},
+	{{ row.units_id }},
+	{{ row.sequence_sumber }},
+	{{ row.frequency }},
+	{{ row.magnitude }},
+	{{ row.ambient_temperature }},
+	{{ row.sky_temperature }},
+	{{ row.signal_strength }}
+);
+{% endfor -%}
+COMMIT;
