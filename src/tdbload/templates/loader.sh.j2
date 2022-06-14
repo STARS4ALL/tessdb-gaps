@@ -1,0 +1,8 @@
+#!/bin/bash
+
+DATABASE={{ database_path }}
+for file in $(ls -1 | sort | grep "stars*")
+do
+	#sqlite3 $DATABASE < $file
+	echo "$file"
+done

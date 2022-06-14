@@ -113,7 +113,6 @@ def createParser():
     dbgen = subparser.add_parser('generate',  help="Generate SQL file ready to be imported")
     dbgen.add_argument('-d', '--dbase',       type=isfile, required=True, help='path to the tess.db database')
     dbgen.add_argument('-i', '--input-file',  type=isfile, required=True, help='path to raw observations in CSV format')
-    dbgen.add_argument('-o', '--output-file', type=str,    required=True, help='path to SQL output file')
  
 
     return parser

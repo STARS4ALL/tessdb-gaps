@@ -22,7 +22,7 @@ import jinja2
 # local imports
 # -------------
 
-from tdbload import INSERT_TPL
+from tdbload import INSERT_TPL, LOADER_TPL
 
 class AmbiguousNameToMACError(Exception):
     '''Ambiguity in name to mac mapping'''
@@ -187,25 +187,31 @@ def sort_measurements(photometers):
     return photometers
 
 
-def generate_sql(photometers, output_file):
+def generate_sql(photometers, database_path, output_dir):
     for name, rows in photometers.items():
         context = dict()
         context['measurements'] = rows
         output = render(INSERT_TPL, context)
-        filename, extension = os.path.splitext(os.path.basename(output_file))
-        filename = filename + '-' + name + extension
-        dirname = os.path.dirname(output_file)
-        full_path = os.path.join(dirname, filename)
+        full_path = os.path.join(output_dir, name + '.sql')
         log.info(f"Writting SQL file {full_path}")
         with open(full_path,'w') as sqlfile:
             sqlfile.write(output)
+    context = dict()
+    context['database_path'] = database_path
+    output = render(LOADER_TPL, context)
+    full_path = os.path.join(output_dir, 'loader.sh')
+    with open(full_path,'w') as script:
+            script.write(output)
 
 # ------------
 # Entry points
 # ------------
 
 def generate(connection, options):
-    log.info(f"Processing measurements from {options.input_file}")
+    name, ext = os.path.splitext(os.path.basename(options.input_file))
+    subdir = os.path.join(os.path.dirname(options.input_file), name)
+    os.makedirs(subdir, exist_ok=True)
+    log.info(f"Processing measurements from {options.input_file} into {subdir} ")
     photometers = lookup_database(connection, options.input_file)
     photometers = sort_measurements(photometers)
-    generate_sql(photometers, options.output_file)
+    generate_sql(photometers, options.dbase, subdir)
