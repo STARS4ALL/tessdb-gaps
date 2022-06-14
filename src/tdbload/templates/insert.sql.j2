@@ -1,7 +1,7 @@
 BEGIN TRANSACTION;
 {% for row in measurements %}
 -- {{ row.name }} ({{ row.mac_address }}) [{{ row.seq }}], m={{ row.mag }}, f={{ row.freq }} Hz, location: {{ row.site_name }}
-INSERT INTO tesss_readings_t(
+INSERT INTO tess_readings_t(
 	date_id, time_id, tess_id, location_id, units_id, sequence_number, frequency, magnitude, ambient_temperature, sky_temperature, signal_strength
 ) VALUES (
 	{{ row.date_id }}, {{ row.time_id }}, {{ row.tess_id }}, {{ row.location_id }}, {{ row.units_id }}, {{ row.seq }}, {{ row.freq }}, {{ row.mag }}, {{ row.tamb }}, {{ row.tsky }}, {{ row.wdBm }}
