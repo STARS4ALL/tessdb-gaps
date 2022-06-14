@@ -228,7 +228,7 @@ def render(template_path, context):
 
 # -----------------------------------------------------------------------------------------------
 
-def lookup_database(connection, input_file):
+def lookup_database(connection, input_file, exclude):
     photometers = dict()
     with open(input_file, newline='') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',')
@@ -247,7 +247,8 @@ def lookup_database(connection, input_file):
             except Exception as e:
                 log.error(e)
                 continue
-            row = filtering(row)
+            if exclude:
+                row = filtering(row)
             if row:
                 rows.append(row)
     return photometers
@@ -287,6 +288,6 @@ def generate(connection, options):
     subdir = os.path.join(os.path.dirname(options.input_file), name)
     os.makedirs(subdir, exist_ok=True)
     log.info(f"Processing measurements from {options.input_file} into {subdir} ")
-    photometers = lookup_database(connection, options.input_file)
+    photometers = lookup_database(connection, options.input_file, options.exclude)
     photometers = sort_measurements(photometers)
     generate_sql(photometers, options.dbase, subdir)
