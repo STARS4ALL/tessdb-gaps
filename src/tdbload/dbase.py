@@ -14,7 +14,7 @@ import os
 import csv
 import logging
 import datetime
-
+import collections
 
 import jinja2
 
@@ -22,7 +22,7 @@ import jinja2
 # local imports
 # -------------
 
-from tdbload import INSERT_TPL
+from tdbload import INSERT_TPL, LOADER_TPL
 
 class AmbiguousNameToMACError(Exception):
     '''Ambiguity in name to mac mapping'''
@@ -65,6 +65,60 @@ class NoTessWithMACError(Exception):
 # ----------------
 
 log = logging.getLogger("tdbload")
+
+# # ----------------------------------------------------
+
+FIFOS = dict()
+FIFOLEN = 7
+
+def isMonotonic(aList):
+        # Calculate first difference
+        first_diff = [aList[i+1] - aList[i] for i in range(len(aList)-1)]
+        # Modified second difference with absolute values, to avoid cancellation 
+        # in final sum due to symmetric differences
+        second_diff = [abs(first_diff[i+1] - first_diff[i]) for i in range(len(first_diff)-1)]
+        return sum(second_diff) == 0
+
+
+def isInvalid(aList):
+    '''
+    Invalid magnitudes have a value of zero
+    '''
+    return sum(aList) == 0
+
+
+def filtering(new_sample):
+    #global FIFOS
+
+    name = new_sample['name']
+    fifo = FIFOS.get(name, collections.deque(maxlen=FIFOLEN))
+    FIFOS[name] = fifo  # Create new fifo if not already
+    fifo.append(new_sample)
+    if len(fifo) < FIFOLEN//2:
+        log.debug(f"[{name}]: Refilling FIFO with seq = {new_sample['seq']}, mag = {new_sample['mag']}, freq = {new_sample['freq']}")
+        if not isInvalid([ item['mag'] for item in fifo ]):
+            chosen = fifo[-1]
+            return chosen
+        else:
+            log.debug(f"[{name}]: discarding sample with seq = {new_sample['seq']}, mag = {new_sample['mag']}, freq = {new_sample['freq']}")
+            return None
+    elif len(fifo) < FIFOLEN:
+        log.debug(f"[{name}]: Simply refilling the fifo with seq = {new_sample['seq']}, mag = {new_sample['mag']}, freq = {new_sample['freq']}")
+        return None
+    else:
+        chosen = fifo[FIFOLEN//2]
+        seqList  = [ item['seq'] for item in fifo ]
+        magList  = [ item['mag'] for item in fifo ]
+        log.debug(f"[{name}: seqList = {seqList}. magList = {magList}")
+        if isMonotonic(seqList) and isInvalid(magList): 
+            log.debug(f"[{name}]: discarding sample with seq = {chosen['seq']}, mag = {chosen['mag']}, freq = {chosen['freq']}")
+            return None
+        else:
+            log.debug(f"[{name}]: accepting sample with seq = {chosen['seq']}, mag = {chosen['mag']}, freq = {chosen['freq']}")
+            return chosen
+
+
+# --------------
 
 
 def lookup_mac(connection, row):
@@ -138,13 +192,31 @@ def fix_ids(row):
     return row
 
 def missing_fields(row):
-    _ = row['name']
-    _ = row['freq']
-    _ = row['mag']
-    _ = row['seq']
-    _ = row['tamb']
-    _ = row['tsky']
-    _ = row['wdBm']
+    name = row['name']
+    try:
+        seq = row['seq'] = int(row['seq'])
+    except Exception:
+        raise ValueError(f"[{name}]: Sequence number conversion error")
+    try:
+        row['mag']  = float(row['mag'])
+    except Exception:
+        raise ValueError(f"[{name}]: (SEQ={seq}) Magnitude conversion error")
+    try:
+        row['freq'] = float(row['freq'])
+    except Exception:
+        raise ValueError(f"[{name}]: (SEQ={seq}) Frequency conversion error")
+    try:
+        row['tamb'] = float(row['tamb'])
+    except Exception:
+        raise ValueError(f"[{name}]: (SEQ={seq}) Box Temperature conversion error")
+    try:
+        row['tsky'] = float(row['tsky'])
+    except Exception:
+        raise ValueError(f"[{name}]: (SEQ={seq}) Sky Temperature conversion error")
+    try:
+        row['wdBm'] = int(row['wdBm'])
+    except Exception:
+        raise ValueError(f"[{name}]: (SEQ={seq}) Received Signal Strength conversion error")
     return row
 
 
@@ -167,25 +239,29 @@ def render(template_path, context):
 
 # -----------------------------------------------------------------------------------------------
 
-def lookup_database(connection, input_file):
+def lookup_database(connection, input_file, exclude):
     photometers = dict()
     with open(input_file, newline='') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=',')
         for row in reader:
             name = row['name']
             rows = photometers.get(name, list())
+            photometers[name] = rows
             try:
                 row = process_row(connection, row)
             except KeyError as e:
                 log.error(f"Missing essential datum in CSV file: {e}")
                 continue
             except NoTessError as e:
-                log.error(f"When looking names for MACs{e}")
+                log.error(f"When looking name to MAC mapping: {e}")
+                continue
             except Exception as e:
                 log.error(e)
                 continue
-            rows.append(row)
-            photometers[name] = rows
+            if exclude:
+                row = filtering(row)
+            if row:
+                rows.append(row)
     return photometers
 
 
@@ -198,25 +274,31 @@ def sort_measurements(photometers):
     return photometers
 
 
-def generate_sql(photometers, output_file):
+def generate_sql(photometers, database_path, output_dir):
     for name, rows in photometers.items():
         context = dict()
         context['measurements'] = rows
         output = render(INSERT_TPL, context)
-        filename, extension = os.path.splitext(os.path.basename(output_file))
-        filename = filename + '-' + name + extension
-        dirname = os.path.dirname(output_file)
-        full_path = os.path.join(dirname, filename)
+        full_path = os.path.join(output_dir, name + '.sql')
         log.info(f"Writting SQL file {full_path}")
         with open(full_path,'w') as sqlfile:
             sqlfile.write(output)
+    context = dict()
+    context['database_path'] = database_path
+    output = render(LOADER_TPL, context)
+    full_path = os.path.join(output_dir, 'loader.sh')
+    with open(full_path,'w') as script:
+        script.write(output)
 
 # ------------
 # Entry points
 # ------------
 
 def generate(connection, options):
-    log.info(f"Processing measurements from {options.input_file}")
-    photometers = lookup_database(connection, options.input_file)
+    name, ext = os.path.splitext(os.path.basename(options.input_file))
+    subdir = os.path.join(os.path.dirname(options.input_file), name)
+    os.makedirs(subdir, exist_ok=True)
+    log.info(f"Processing measurements from {options.input_file} into {subdir} ")
+    photometers = lookup_database(connection, options.input_file, options.exclude)
     photometers = sort_measurements(photometers)
-    generate_sql(photometers, options.output_file)
+    generate_sql(photometers, options.dbase, subdir)

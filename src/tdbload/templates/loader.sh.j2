@@ -1,0 +1,9 @@
+#!/bin/bash
+
+DATABASE={{ database_path }}
+for file in $(ls -1 | sort | grep "stars*")
+do
+	echo "sqlite3 ../{{ database_path }} < $file" | ts '[%Y-%m-%d %H:%M:%S]'
+	sqlite3 ../{{ database_path }} < $file
+	sleep 5
+done

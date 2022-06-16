@@ -27,6 +27,8 @@ from tdbgaps._version import get_versions
 # ----------------
 
 __version__ = get_versions()['version']
-INSERT_TPL           = resource_filename(__name__, os.path.join('templates', 'insert.sql.j2'))
+INSERT_TPL = resource_filename(__name__, os.path.join('templates', 'insert.sql.j2'))
+LOADER_TPL = resource_filename(__name__, os.path.join('templates', 'loader.sh.j2'))
+
 
 del get_versions
