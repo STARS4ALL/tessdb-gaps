@@ -51,6 +51,15 @@ class NoTessError(Exception):
         s = '{0}.'.format(s)
         return s
 
+class NoTessWithMACError(Exception):
+    '''No TESS found with MAC'''
+    def __str__(self):
+        s = self.__doc__
+        if self.args:
+            s = ' {0}: {1}'.format(s, str(self.args))
+        s = '{0}.'.format(s)
+        return s
+
 # ----------------
 # Module constants
 # ----------------
@@ -91,6 +100,8 @@ def lookup_tess(connection, row):
     result = cursor.fetchall()
     if len(result) > 1:
         raise AmbiguousTessId(row['name'], row['mac_address'], *result)
+    elif len(result) == 0:
+        raise NoTessWithMACError(row['name'], row['mac_address'])
     row['tess_id']             = result[0][0]
     row['tess_id_valid_state'] = result[0][1]
     row['tess_id_valid_since'] = result[0][2]
@@ -169,7 +180,7 @@ def lookup_database(connection, input_file):
                 log.error(f"Missing essential datum in CSV file: {e}")
                 continue
             except NoTessError as e:
-                log.error(f"When looking name->MAC{e}")
+                log.error(f"When looking names for MACs{e}")
             except Exception as e:
                 log.error(e)
                 continue
