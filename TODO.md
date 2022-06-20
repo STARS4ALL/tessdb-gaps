@@ -16,7 +16,33 @@ Fichero CSV de esteban tiene: time,freq,mag,rev,seq,tamb,tsky,wdBm
    - si hay varios es un error
 
 
+# Errores
 
+## Fichero database_2019_11_29.csv
+Antes de 
+[2022-06-20 18:47:59] sqlite3 /var/dbase/tess.db < stars19.sql
+[2022-06-20 18:48:01] sqlite3 /var/dbase/tess.db < stars1.sql
+
+Salen mogollon de integroity erros
+
+[2022-06-20 18:50:13] sqlite3 /var/dbase/tess.db < stars297.sql
+Error: near line 4169: columns date_id, time_id, tess_id are not unique
+
+## Fichero database_2020_12_23.csv
+
+[2022-06-20 18:58:44] sqlite3 /var/dbase/tess.db < stars301.sql
+Error: near line 118577: columns date_id, time_id, tess_id are not unique
+
+[2022-06-20 19:06:27] sqlite3 /var/dbase/tess.db < stars468.sql
+Error: near line 115462: columns date_id, time_id, tess_id are not unique
+
+## Fichero database_2021_01_31.csv
+
+## Fichero database_2021_06_25.csv
+
+[2022-06-20 19:31:27] sqlite3 /var/dbase/tess.db < stars477.sql
+Error: near line 56039: columns date_id, time_id, tess_id are not unique
+Error: near line 123134: columns date_id, time_id, tess_id are not unique
 
 # Deteccion de ambiguedad de estado
 select mac_address,tess_id,valid_state, count(valid_state)
