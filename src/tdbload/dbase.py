@@ -200,23 +200,23 @@ def missing_fields(row):
     try:
         row['mag']  = float(row['mag'])
     except Exception:
-        raise ValueError(f"[{name}]: (SEQ={seq}) Magnitude conversion error")
+        raise ValueError(f"[{name}]: (SEQ={seq}) Magnitude conversion error => {row['mag']}")
     try:
         row['freq'] = float(row['freq'])
     except Exception:
-        raise ValueError(f"[{name}]: (SEQ={seq}) Frequency conversion error")
+        raise ValueError(f"[{name}]: (SEQ={seq}) Frequency conversion error => {row['freq']}")
     try:
         row['tamb'] = float(row['tamb'])
     except Exception:
-        raise ValueError(f"[{name}]: (SEQ={seq}) Box Temperature conversion error")
+        raise ValueError(f"[{name}]: (SEQ={seq}) Box Temperature conversion error => {row['tamb']}")
     try:
         row['tsky'] = float(row['tsky'])
     except Exception:
-        raise ValueError(f"[{name}]: (SEQ={seq}) Sky Temperature conversion error")
+        raise ValueError(f"[{name}]: (SEQ={seq}) Sky Temperature conversion error => {row['tsky']}")
     try:
         row['wdBm'] = int(row['wdBm'])
     except Exception:
-        raise ValueError(f"[{name}]: (SEQ={seq}) Received Signal Strength conversion error")
+        raise ValueError(f"[{name}]: (SEQ={seq}) Received Signal Strength conversion error => {row['wdBm']}")
     return row
 
 
@@ -250,10 +250,11 @@ def lookup_database(connection, input_file, exclude):
             try:
                 row = process_row(connection, row)
             except KeyError as e:
-                log.error(f"Missing essential datum in CSV file: {e}")
+                log.error(f"Missing essential datum in CSV file: {row}")
                 continue
             except NoTessError as e:
-                log.error(f"When looking name to MAC mapping: {e}")
+                if name.startswith('stars'):
+                    log.error(f"When looking name to MAC mapping: {e}")
                 continue
             except Exception as e:
                 log.error(e)
