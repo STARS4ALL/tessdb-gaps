@@ -44,6 +44,118 @@ Error: near line 115462: columns date_id, time_id, tess_id are not unique
 Error: near line 56039: columns date_id, time_id, tess_id are not unique
 Error: near line 123134: columns date_id, time_id, tess_id are not unique
 
+## Fichero database_2021_08_15_2.csv
+
+[2022-06-21 09:49:46] sqlite3 /var/dbase/tess.db < stars539.sql
+Error: near line 115413: columns date_id, time_id, tess_id are not unique
+
+## Fichero database_2021_08_15.csv
+
+[2022-06-21 10:03:42] sqlite3 /var/dbase/tess.db < stars222.sql
+Error: near line 151085: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:07:36] sqlite3 /var/dbase/tess.db < stars36.sql
+Error: near line 112221: columns date_id, time_id, tess_id are not unique
+Error: near line 112228: columns date_id, time_id, tess_id are not unique
+Error: near line 859947: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:08:35] sqlite3 /var/dbase/tess.db < stars394.sql
+Error: near line 150679: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:13:17] sqlite3 /var/dbase/tess.db < stars475.sql
+Error: near line 146962: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:13:57] sqlite3 /var/dbase/tess.db < stars485.sql
+Error: near line 98172: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:15:41] sqlite3 /var/dbase/tess.db < stars525
+./loader.sh: línea 7: stars525: No existe el fichero o el directorio
+[2022-06-21 10:15:43] sqlite3 /var/dbase/tess.db < .sql
+./loader.sh: línea 7: .sql: No existe el fichero o el directorio
+
+[2022-06-21 10:17:15] sqlite3 /var/dbase/tess.db < stars550.sql
+Error: near line 879477: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:18:19] sqlite3 /var/dbase/tess.db < stars6
+./loader.sh: línea 7: stars6: No existe el fichero o el directorio
+[2022-06-21 10:18:21] sqlite3 /var/dbase/tess.db < 09.sql
+./loader.sh: línea 7: 09.sql: No existe el fichero o el directorio
+
+[2022-06-21 10:20:42] sqlite3 /var/dbase/tess.db < stars639.sql
+Error: near line 150315: columns date_id, time_id, tess_id are not unique
+
+## Fichero database_2021_10_24.csv 
+
+[2022-06-21 10:30:32] sqlite3 /var/dbase/tess.db < stars369.sql
+Error: near line 37069: columns date_id, time_id, tess_id are not unique
+Error: near line 37286: columns date_id, time_id, tess_id are not unique
+Error: near line 37293: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:35:12] sqlite3 /var/dbase/tess.db < stars529.sql
+Error: near line 36544: columns date_id, time_id, tess_id are not unique
+Error: near line 37335: columns date_id, time_id, tess_id are not unique
+Error: near line 37545: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:35:26] sqlite3 /var/dbase/tess.db < stars530.sql
+Error: near line 28249: columns date_id, time_id, tess_id are not unique
+Error: near line 34962: columns date_id, time_id, tess_id are not unique
+Error: near line 35179: columns date_id, time_id, tess_id are not unique
+Error: near line 35186: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:35:32] sqlite3 /var/dbase/tess.db < stars531.sql
+Error: near line 37300: columns date_id, time_id, tess_id are not unique
+Error: near line 37517: columns date_id, time_id, tess_id are not unique
+Error: near line 40184: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 10:35:45] sqlite3 /var/dbase/tess.db < stars539.sql
+Error: near line 37377: columns date_id, time_id, tess_id are not unique
+Error: near line 37594: columns date_id, time_id, tess_id are not unique
+
+## Fichero database_2021_11_04.csv
+
+[2022-06-21 10:51:59] sqlite3 /var/dbase/tess.db < stars221.sql
+Error: near line 48759: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 11:00:59] sqlite3 /var/dbase/tess.db < stars525
+./loader.sh: línea 7: stars525: No existe el fichero o el directorio
+[2022-06-21 11:01:01] sqlite3 /var/dbase/tess.db < .sql
+./loader.sh: línea 7: .sql: No existe el fichero o el directorio
+
+[2022-06-21 11:01:42] sqlite3 /var/dbase/tess.db < stars539.sql
+Error: near line 62948: columns date_id, time_id, tess_id are not unique
+
+[2022-06-21 11:03:09] sqlite3 /var/dbase/tess.db < stars6
+./loader.sh: línea 7: stars6: No existe el fichero o el directorio
+[2022-06-21 11:03:11] sqlite3 /var/dbase/tess.db < 09.sql
+./loader.sh: línea 7: 09.sql: No existe el fichero o el directorio
+
+## Fichero database_2021_11_14.csv
+
+[2022-06-21 11:24:40] sqlite3 /var/dbase/tess.db < stars525
+./loader.sh: línea 7: stars525: No existe el fichero o el directorio
+[2022-06-21 11:24:42] sqlite3 /var/dbase/tess.db < .sql
+./loader.sh: línea 7: .sql: No existe el fichero o el directorio
+
+[2022-06-21 11:26:45] sqlite3 /var/dbase/tess.db < stars6
+./loader.sh: línea 7: stars6: No existe el fichero o el directorio
+[2022-06-21 11:26:47] sqlite3 /var/dbase/tess.db < 09.sql
+./loader.sh: línea 7: 09.sql: No existe el fichero o el directorio
+
+## Fichero database_2022_01_17.csv
+
+Nada
+
+## Fichero database_2022_04_12.csv
+
+
+
+# Aumento de la BBDD
+
+aumento de hoy en la BD 12376713216-10635986944 = 1740726272 / 10635986944 = 16,37% mas
+
+-rw-r--r--.  1 rfg  rfg  12376713216 jun 21 11:45 tess.db
+-rw-r--r--.  1 rfg  rfg  10635986944 jun 20 12:01 tess.db-20220620
+
 # Deteccion de ambiguedad de estado
 select mac_address,tess_id,valid_state, count(valid_state)
 FROM tess_t
