@@ -149,6 +149,38 @@ def unique_locations(locations):
             log.info(f"{N} Duplicates for {key}, CSV rows {csv_rows}")
     return [values[0] for key, values in result.items()]
         
+
+def db_location(connection, row):
+    HEADERS = [ "site_db", "longitude_db", "latitude_db", "elevation_db", "location_db", "zipcode_db", 
+    "province_db", "state_db", "country_db", "timezone_db", "contact_name_db", "contact_email_db", "organization_db"
+    ]
+    cursor = connection.cursor()
+    sql = '''
+        SELECT site, longitude, latitude, elevation, location, zipcode, province, 
+        state, country, timezone, contact_name, contact_email, organization
+        FROM location_t
+        WHERE site = :site
+        '''
+    cursor.execute(sql, row)
+    result = cursor.fetchone()
+    if result:
+        return dict(zip(HEADERS,result))
+    else:
+        return dict(zip(HEADERS,[None,None,None,None,None,None,None,None,None,None,None,None,None]))
+
+def merge_locations(atuple):
+    db_loc  = atuple[1]
+    csv_loc = atuple[0]
+    return {**csv_loc, **db_loc}
+
+def my_writter(output_file, locations):
+    with open(output_file, 'w', newline='') as csvfile:
+        headers = sorted(locations[0].keys())
+        writer = csv.DictWriter(csvfile, fieldnames=headers)
+        writer.writeheader()
+        for location in locations:
+            writer.writerow(location)
+ 
 # ------------
 # Entry points
 # ------------
@@ -162,6 +194,11 @@ def generate(connection, options):
         g2 = map(location_dict, g1)
         locations = list(filter(non_empty_dict, g2))
     locations = unique_locations(locations)
-    log.info(f"Found {len(locations)} unique locations")
-    generate_sql(locations, options.input_dir)
+    log.info(f"Found {len(locations)} unique locations in CSV file")
+    existing_locations = [db_location(connection, row) for row in locations]
+    log.info(f"Searched {len(existing_locations)} existing locations")
+    merged_locations = list(map(merge_locations, zip(locations, existing_locations)))
+    log.info(f"Merged {len(merged_locations)} merged locations")
+    my_writter("locations.csv", merged_locations) 
+    generate_sql(merged_locations, options.input_dir)
       
