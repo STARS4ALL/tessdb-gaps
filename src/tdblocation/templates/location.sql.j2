@@ -1,0 +1,10 @@
+BEGIN TRANSACTION;
+{% for row in locations %}
+-- (CSV #{{ row.id }}) {{ row.site }} at {{ row.longitude }}, {{ row.latitude }} ({{ row.location }}, {{ row.country }}) 
+INSERT INTO location_t(
+	site, longitude, latitude, elevation, location, zipcode, province, state, country, timezone, contact_name, contact_email, organization
+) VALUES (
+	"{{ row.site }}", {{ row.longitude }}, {{ row.latitude }}, {{ row.elevation }}, "{{ row.location }}", "{{ row.zipcode }}", "{{ row.province }}", "{{ row.state }}", "{{ row.country }}", "{{ row.timezone }}", "{{ row.contact_name }}", "{{ row.contact_email }}", "{{ row.organization }}"
+);
+{% endfor -%}
+COMMIT;

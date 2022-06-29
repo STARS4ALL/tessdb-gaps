@@ -42,6 +42,9 @@ PACKAGE_DATA = {
     'tdbload.templates': [
         '*.j2',
     ],
+    'tdblocation.templates': [
+        '*.j2',
+    ],
 }
 
 SCRIPTS = [
