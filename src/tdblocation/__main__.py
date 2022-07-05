@@ -110,9 +110,14 @@ def createParser():
     # ---------------------------------------
 
     subparser = parser_loc.add_subparsers(dest='subcommand')
-    locgen = subparser.add_parser('generate',  help="Generate SQL file ready to be imported")
-    locgen.add_argument('-d', '--dbase',      type=isfile, required=True, help='path to the tess.db database')
-    locgen.add_argument('-i', '--input-dir',  type=isdir, default=".", help='directory where master locations CSV file')
+
+    locana1 = subparser.add_parser('analyze1',  help="Generate CSV file for compared analysis")
+    locana1.add_argument('-d', '--dbase',      type=isfile, required=True, help='path to the tess.db database')
+    locana1.add_argument('-i', '--input-dir',  type=isdir, default=".", help='directory where master locations CSV file')
+
+    locana2 = subparser.add_parser('analyze2',  help="Generate SQL file with locations ready to be imported")
+    locana2.add_argument('-d', '--dbase',      type=isfile, required=True, help='path to the tess.db database')
+    locana2.add_argument('-i', '--input-file', type=isfile, default=".", help='comparative locations CSV file')
 
     return parser
 

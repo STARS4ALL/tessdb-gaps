@@ -180,12 +180,23 @@ def my_writter(output_file, locations):
         writer.writeheader()
         for location in locations:
             writer.writerow(location)
- 
+
+def insertable(item):
+    #print(item)
+    return True if item['status'].strip() == 'insert' else False
+
+def kkfuti(item):
+    elevation = item['elevation']
+    item['elevation'] = elevation if elevation != "'Unknown'" else "Unknown"
+    item['longitude'] = atof(item['longitude'])
+    item['latitude']  = atof(item['latitude'])
+    return item
+
 # ------------
 # Entry points
 # ------------
 
-def generate(connection, options):
+def analyze1(connection, options):
     fullname = os.path.join(options.input_dir, INPUT_FILENAME)
     log.info(f"Processing measurements from {fullname}")
     with open(fullname, newline='') as csvfile:
@@ -201,4 +212,15 @@ def generate(connection, options):
     log.info(f"Merged {len(merged_locations)} merged locations")
     my_writter("locations.csv", merged_locations) 
     generate_sql(merged_locations, options.input_dir)
-      
+
+
+
+def analyze2(connection, options):
+    fullname = options.input_file
+    log.info(f"Processing measurements from {fullname}")
+    with open(fullname, newline='') as csvfile:
+        reader = csv.DictReader(csvfile, restkey='basura')
+        g1 = filter(insertable, reader)
+        new_locations = list(map(kkfuti, g1))
+    log.info(f"Generating {len(new_locations)} new locations")
+    generate_sql(new_locations, ".")
